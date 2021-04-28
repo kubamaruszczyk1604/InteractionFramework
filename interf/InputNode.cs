@@ -172,11 +172,29 @@ namespace InteractionFramework
             if (!HasAttributes(attributes)) return false;
             return true;
         }
+        /// <summary>
+        /// Called when the node is registered with input system
+        /// </summary>
         virtual public void OnRegister() { }
+        /// <summary>
+        /// Called when the node is added to an interaction node
+        /// </summary>
         virtual public void OnEngaged() { IsInUse = true; }
+        /// <summary>
+        /// Called on owner interaction node start
+        /// </summary>
         virtual public void OnStart() { }
+        /// <summary>
+        /// Called every frame
+        /// </summary>
         virtual public void Update() { }
-        virtual public void OnStop() {  }
+        /// <summary>
+        /// Called when owner interacction node shuts down
+        /// </summary>
+        virtual public void OnStop() { }
+        /// <summary>
+        /// Called when this node is released to the pool of available nodes by it's current owner(interaction node)
+        /// </summary>
         virtual public void OnReleased() { IsInUse = false; }
 
     }

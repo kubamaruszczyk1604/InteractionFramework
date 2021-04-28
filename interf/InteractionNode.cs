@@ -112,46 +112,5 @@ namespace InteractionFramework
         }
     }
 
-    public class TestNodeInteraction: InteractionNode
-    {
-        I2DPosProvider m_PosProvider = null;
-        ICommandProvider m_CommandProvider = null;
-        Attribute[] attribList = new Attribute[] { new Attribute("Name", "Mouse"), new Attribute("Type", "2Buttons") };
 
-        public void FindNodes()
-        {
-
-            //if(TryFindMatchingNode(attribList, m_DirectionProvider, out InputNode node))
-            //{
-            //    m_DirectionProvider = (IDirectionProvider)node;
-            //    m_DirectionProvider.onDirectionChanged += OnDirectionChanged;
-            //}
-            //else
-            //{
-            //    Available = false;
-            //}
-
-            if(TryFindMatchingNode(attribList, new Type[] { Utils.GetTypeFromRef(m_PosProvider), Utils.GetTypeFromRef(m_CommandProvider) }, out InputNode node))
-            {
-                AddInputNode(node);
-                m_PosProvider = (I2DPosProvider)node;
-                m_CommandProvider = (ICommandProvider)node;
-
-                m_PosProvider.onPositionChanged += OnPositionChanged;
-                m_CommandProvider.onCommand += OnCommand;
-            }
-
-        }
-
-        void OnPositionChanged(Vector3 delta, Vector3 posNow)
-        {
-            Console.WriteLine("pos changed: x = " + posNow.X + "  y = " + posNow.Y);
-        }
-
-        void OnCommand(CommandData command)
-        {
-            Console.WriteLine("Command received = " + command.Command);
-        }
-
-    }
 }
