@@ -7,15 +7,8 @@ using System.Runtime.InteropServices;
 namespace InteractionFramework
 {
 
-
-
-
-
     class Program
     {
-
-
-
         static void Main(string[] args)
         {
 

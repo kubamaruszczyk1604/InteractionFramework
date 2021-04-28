@@ -116,6 +116,11 @@ namespace InteractionFramework
 
                 m_PosProvider.onPositionChanged += OnPositionChanged;
                 m_CommandProvider.onCommand += OnCommand;
+                Available = true;
+            }
+            else
+            {
+                Available = false;
             }
 
         }

@@ -8,6 +8,7 @@ namespace InteractionFramework
 {
     public abstract class InputNode
     {
+        public string ID { get; protected set; }
         private Dictionary<string, Attribute> m_Attributes;
         public bool IsInUse { get; private set; }
 
@@ -16,6 +17,7 @@ namespace InteractionFramework
            // Console.WriteLine("Abstract constructor called");
             m_Attributes = new Dictionary<string, Attribute>();
             InputSystem.Instance.RegisterNode(this);
+            ID = "unnamed";
         }
 
         public string[] GetInterfaceList()

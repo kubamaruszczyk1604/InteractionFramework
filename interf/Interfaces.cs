@@ -53,5 +53,13 @@ namespace InteractionFramework
         OnPositionChanged onPositionChanged { get; set; }
     }
 
-   
+    public delegate void OnNewText(string text);
+    public delegate void OnNewLine();
+    public delegate void OnMoveCursor(int right, int down);
+    public interface ITextProvider
+    {
+        OnNewText onNewText { get; set; }
+        OnNewLine onNewLine { get; set; }
+        OnMoveCursor onMoveCursor { get; set; }
+    }
 }
