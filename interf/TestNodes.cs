@@ -52,6 +52,7 @@ namespace InteractionFramework
         {
             base.OnStart();
             Console.WriteLine("Start controllera");
+
         }
 
         override protected void OnUpdate()

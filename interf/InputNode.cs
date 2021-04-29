@@ -11,7 +11,7 @@ namespace InteractionFramework
     {
         public string ID { get; protected set; }
         public bool IsInUse { get { return State == InputNodeState.InUse; } }
-        public InputNodeState State { get; private set; }
+        public InputNodeState State { get; protected set; }
         public List<InteractionNode> Parents { get; private set; }
 
 
@@ -51,7 +51,8 @@ namespace InteractionFramework
 
         public void Start(InteractionNode caller)
         {
-            if(State == InputNodeState.InUse)
+          
+            if (State == InputNodeState.InUse)
             {
                 throw new Exception("Node already engaged");
             }
@@ -62,6 +63,7 @@ namespace InteractionFramework
 
         public void Update(InteractionNode caller)
         {
+           
             if (State != InputNodeState.InUse) return;
             if (p_CurrentUser != caller) return;
             this.OnUpdate();

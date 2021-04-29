@@ -37,6 +37,7 @@ namespace InteractionFramework
 
             TestNodeInteraction tin = new TestNodeInteraction();
 
+
             tin.Start();
             while (true)
             {

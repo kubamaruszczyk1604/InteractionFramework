@@ -11,7 +11,7 @@ namespace InteractionFramework
     {
        
         public bool InputSatisfied { get; private set; }
-        public string ID { get; protected set; }
+        public string ID { get; private set; }
         public InteractionNodeState State { get; private set; }
 
         private Dictionary<string, Attribute> m_Attributes;
@@ -89,7 +89,19 @@ namespace InteractionFramework
             if(nodes.Length > 0)
             {
                 node = nodes[0];
-                  
+                //if the node is in use search for a possible  better option
+                if (node.IsInUse)
+                {
+                    for (int i = 0; i < nodes.Length; ++i)
+                    {
+                        if (!nodes[i].IsInUse)
+                        {
+                            node = nodes[i];
+                            break;
+                        }
+                    }
+                }
+
                 return true;
             }
             return false;
@@ -102,6 +114,18 @@ namespace InteractionFramework
             if (nodes.Length > 0)
             {
                 node = nodes[0];
+                //if the node is in use search for a possible  better option
+                if(node.IsInUse)
+                {
+                    for(int i = 0; i < nodes.Length ;++i)
+                    {
+                        if(!nodes[i].IsInUse)
+                        {
+                            node = nodes[i];
+                            break;
+                        }
+                    }
+                }
 
                 return true;
             }
@@ -146,6 +170,7 @@ namespace InteractionFramework
 
         public void Start()
         {
+           
             if (CheckBusy() != InteractionNodeState.Free) throw new Exception("Node already in use!");
 
             InputSatisfied = this.DoSearch();
