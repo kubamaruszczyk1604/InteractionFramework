@@ -12,7 +12,9 @@ namespace InteractionFramework
         static void Main(string[] args)
         {
 
-            Controller con = new Controller();
+            Controller con = new Controller("A");
+            
+            Controller con2 = new Controller("B");
             //Type[] inter = con.GetInterfaceListAsTypes();
             //List<Type> tst = new List<Type>();
             //tst.AddRange(inter);
@@ -34,7 +36,6 @@ namespace InteractionFramework
             //Console.WriteLine(matches.Length);
 
             TestNodeInteraction tin = new TestNodeInteraction();
-            tin.FindNodes();
 
             tin.Start();
             while (true)

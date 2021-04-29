@@ -10,10 +10,12 @@ namespace InteractionFramework
     public abstract class InputNode
     {
         public string ID { get; protected set; }
-        public bool IsInUse { get { return State == NodeState.Engaged; } }
-        public NodeState State { get; private set; }
-        public InteractionNode Parent { get; private set; }
+        public bool IsInUse { get { return State == InputNodeState.InUse; } }
+        public InputNodeState State { get; private set; }
+        public List<InteractionNode> Parents { get; private set; }
 
+
+        private InteractionNode p_CurrentUser;
         private Dictionary<string, Attribute> m_Attributes;
         protected InputNode()
         {
@@ -21,8 +23,9 @@ namespace InteractionFramework
             m_Attributes = new Dictionary<string, Attribute>();
             InputSystem.Instance.RegisterNode(this);
             ID = "unnamed";
-            Parent = null;
-            State = NodeState.Available;
+            Parents = new List<InteractionNode>();
+            State = InputNodeState.Available;
+            p_CurrentUser = null;
         }
 
 
@@ -31,41 +34,44 @@ namespace InteractionFramework
             this.OnRegister();
         }
 
-        public void AssignTo(InteractionNode parent)
+        public void AddNewParrent(InteractionNode parent)
         {
-            if(Parent == parent)
+            if(Parents.Contains(parent))
             {
                 throw new Exception("Cannod Assign to the same parent twice, ID: " + this.ID );
             }
-            if(State == NodeState.Unavailable)
+            if(State == InputNodeState.Unavailable)
             {
                 throw new Exception("Attempt to engage unavailable node:, ID " + this.ID);
             }
-            
-            Parent = parent;
-            this.OnAssigned(parent);
+
+            Parents.Add(parent);
+            this.OnNewParentAdded(parent);
         }
 
-        public void Start()
+        public void Start(InteractionNode caller)
         {
-            if(State == NodeState.Engaged)
+            if(State == InputNodeState.InUse)
             {
                 throw new Exception("Node already engaged");
             }
-            State = NodeState.Engaged;
+            p_CurrentUser = caller;
+            State = InputNodeState.InUse;
             this.OnStart();
         }
 
-        public void Update()
+        public void Update(InteractionNode caller)
         {
-            if (State != NodeState.Engaged) return;
+            if (State != InputNodeState.InUse) return;
+            if (p_CurrentUser != caller) return;
             this.OnUpdate();
         }
 
-        public void Stop()
+        public void Stop(InteractionNode caller)
         {
-            if (State != NodeState.Engaged) return;
-            State = NodeState.Available;
+            if (State != InputNodeState.InUse) return;
+            if (p_CurrentUser != caller) return;
+            State = InputNodeState.Available;
             this.OnStop();
         }
 
@@ -226,7 +232,7 @@ namespace InteractionFramework
             return true;
         }
 
-     
+
 
 
         /// <summary>
@@ -236,7 +242,7 @@ namespace InteractionFramework
         /// <summary>
         /// Called when the node is added to an interaction node
         /// </summary>
-        virtual protected void OnAssigned(InteractionNode parent)
+        virtual protected void OnNewParentAdded(InteractionNode parent)
         {
             
         }

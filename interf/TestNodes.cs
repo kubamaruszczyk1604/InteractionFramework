@@ -31,11 +31,12 @@ namespace InteractionFramework
         #endregion
 
 
-        public Controller() : base()
+        public Controller(string id) : base()
         {
             //  Console.WriteLine("Instance constructor called");
             AddAttribute(new Attribute("Name", "Mouse"));
             AddAttribute(new Attribute("Type", "2Buttons"));
+            ID = id;
             //AddAttribute();
         }
 
@@ -73,13 +74,13 @@ namespace InteractionFramework
                 if (key.Key == ConsoleKey.LeftArrow)
                 {
                     CommandData cd = new CommandData();
-                    cd.Command = "LeftButton";
+                    cd.Command = "LeftButton " + ID;
                     if (onCommand != null) onCommand.Invoke(cd);
                 }
                 else if (key.Key == ConsoleKey.RightArrow)
                 {
                     CommandData cd = new CommandData();
-                    cd.Command = "RightButton";
+                    cd.Command = "RightButton " + ID;
                     if (onCommand != null) onCommand.Invoke(cd);
                 }
             }
@@ -95,7 +96,7 @@ namespace InteractionFramework
         ICommandProvider m_CommandProvider = null;
         Attribute[] attribList = new Attribute[] { new Attribute("Name", "Mouse"), new Attribute("Type", "2Buttons") };
 
-        public void FindNodes()
+        override protected bool DoSearch()
         {
 
             //if(TryFindMatchingNode(attribList, m_DirectionProvider, out InputNode node))
@@ -114,15 +115,24 @@ namespace InteractionFramework
                 m_PosProvider = (I2DPosProvider)node;
                 m_CommandProvider = (ICommandProvider)node;
 
-                m_PosProvider.onPositionChanged += OnPositionChanged;
-                m_CommandProvider.onCommand += OnCommand;
-                SetAvailable(true);
-            }
-            else
-            {
-                SetAvailable(false);
-            }
 
+                return true;
+            }
+            return false;
+        }
+
+        override protected void OnSearchSucess()
+        {
+            //m_PosProvider.onPositionChanged = null;
+            //m_CommandProvider.onCommand = null;
+            m_PosProvider.onPositionChanged += OnPositionChanged;
+            m_CommandProvider.onCommand += OnCommand;
+        }
+
+        override protected void OnSearchFailed()
+        {
+            m_PosProvider.onPositionChanged = null;
+            m_CommandProvider.onCommand = null;
         }
 
         void OnPositionChanged(Vector3 delta, Vector3 posNow)

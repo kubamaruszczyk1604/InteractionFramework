@@ -2,6 +2,7 @@
 
 namespace InteractionFramework
 {
-    public enum NodeState { Unavailable = 0, Available = 1, Engaged = 2}
+    public enum InputNodeState { Unavailable = 0, Available = 1, InUse = 2}
+    public enum InteractionNodeState { Free = 0, InUse = 1, UnderlyingInputInUse = 2 }
 
 }
