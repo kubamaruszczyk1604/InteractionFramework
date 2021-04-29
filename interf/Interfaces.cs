@@ -26,6 +26,7 @@ namespace InteractionFramework
     {
         public string Command { get; set; }
     }
+
     public delegate void OnCommand(CommandData command);
     public interface ICommandProvider
     {
@@ -55,11 +56,20 @@ namespace InteractionFramework
 
     public delegate void OnNewText(string text);
     public delegate void OnNewLine();
-    public delegate void OnMoveCursor(int right, int down);
+    public delegate void OnJumpCursor(int right, int down);
     public interface ITextProvider
     {
         OnNewText onNewText { get; set; }
         OnNewLine onNewLine { get; set; }
-        OnMoveCursor onMoveCursor { get; set; }
+        OnJumpCursor onMoveCursor { get; set; }
+    }
+
+    public enum Finger { Thumb = 0, Index = 1, Middle = 2, Ring = 3, Pinky = 4 }
+    public enum Hand { Unknown = 0, Left = 1, Right = 2}
+    public interface IHandTracker
+    {
+        Vector3 GetFingertipPosition(Finger finger,Hand hand);
+        Vector3 GetFingerDirection(Finger finger, Hand hand);
+
     }
 }

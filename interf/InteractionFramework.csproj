@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attribute.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="InputNode.cs" />
     <Compile Include="InputSystem.cs" />
     <Compile Include="InteractionManager.cs" />

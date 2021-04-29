@@ -10,7 +10,6 @@ namespace InteractionFramework
     {
         public static readonly InputSystem Instance = new InputSystem();
         private List<InputNode> m_Nodes;
-        private List<InputNode> m_FreeNodes;
         static InputSystem()
         {
 
@@ -20,14 +19,13 @@ namespace InteractionFramework
         {
             Console.WriteLine("Constructor InputSystem");
             m_Nodes = new List<InputNode>();
-            m_FreeNodes = new List<InputNode>();
         }
 
         public void RegisterNode(InputNode node)
         {
             if (m_Nodes.Contains(node)) throw new Exception("Node " + node.ID + " is already registered");
             m_Nodes.Add(node);
-            node.OnRegister();
+            node.Register();
         }
 
 

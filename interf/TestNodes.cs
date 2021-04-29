@@ -47,15 +47,15 @@ namespace InteractionFramework
 
         public OnCommand onCommand { get; set; }
 
-        override public void OnStart()
+        override protected void OnStart()
         {
             base.OnStart();
             Console.WriteLine("Start controllera");
         }
 
-        public override void Update()
+        override protected void OnUpdate()
         {
-            base.Update();
+            base.OnUpdate();
             m_LastPoint = m_Point;
 
             GetCursorPos(ref m_Point);
@@ -108,7 +108,7 @@ namespace InteractionFramework
             //    Available = false;
             //}
 
-            if (TryFindMatchingNode(attribList, new Type[] { Utils.GetTypeFromRef(m_PosProvider), Utils.GetTypeFromRef(m_CommandProvider) }, out InputNode node))
+            if (TryFindMatchingInputNode(attribList, new Type[] { Utils.GetTypeFromRef(m_PosProvider), Utils.GetTypeFromRef(m_CommandProvider) }, out InputNode node))
             {
                 AddInputNode(node);
                 m_PosProvider = (I2DPosProvider)node;
@@ -116,11 +116,11 @@ namespace InteractionFramework
 
                 m_PosProvider.onPositionChanged += OnPositionChanged;
                 m_CommandProvider.onCommand += OnCommand;
-                Available = true;
+                SetAvailable(true);
             }
             else
             {
-                Available = false;
+                SetAvailable(false);
             }
 
         }

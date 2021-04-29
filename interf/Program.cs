@@ -26,7 +26,7 @@ namespace InteractionFramework
             // InputSystem refer = InputSystem.Instance;
 
             // Console.WriteLine(InputSystem.ImplementsInterfaces(con, tst.ToArray()));
-           // Attribute[] attr = new Attribute[] { new Attribute("a", "2"), new Attribute("b", "3") };
+            // Attribute[] attr = new Attribute[] { new Attribute("a", "2"), new Attribute("b", "3") };
             // bool val =  InputSystem.IsMathingCriteria(con, tst.ToArray(), attr);
             // Console.WriteLine("Matches criteria: " + val.ToString());
 
@@ -36,13 +36,13 @@ namespace InteractionFramework
             TestNodeInteraction tin = new TestNodeInteraction();
             tin.FindNodes();
 
-            tin.OnStart();
-            while(true)
+            tin.Start();
+            while (true)
             {
-                tin.OnUpdate();
+                tin.Update();
             }
 
             Console.ReadLine();
         }
     }
-}
+}   

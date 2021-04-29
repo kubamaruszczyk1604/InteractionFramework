@@ -6,19 +6,70 @@ using System.Threading.Tasks;
 
 namespace InteractionFramework
 {
+    
     public abstract class InputNode
     {
         public string ID { get; protected set; }
-        private Dictionary<string, Attribute> m_Attributes;
-        public bool IsInUse { get; private set; }
+        public bool IsInUse { get { return State == NodeState.Engaged; } }
+        public NodeState State { get; private set; }
+        public InteractionNode Parent { get; private set; }
 
+        private Dictionary<string, Attribute> m_Attributes;
         protected InputNode()
         {
            // Console.WriteLine("Abstract constructor called");
             m_Attributes = new Dictionary<string, Attribute>();
             InputSystem.Instance.RegisterNode(this);
             ID = "unnamed";
+            Parent = null;
+            State = NodeState.Available;
         }
+
+
+        public void Register()
+        {
+            this.OnRegister();
+        }
+
+        public void AssignTo(InteractionNode parent)
+        {
+            if(Parent == parent)
+            {
+                throw new Exception("Cannod Assign to the same parent twice, ID: " + this.ID );
+            }
+            if(State == NodeState.Unavailable)
+            {
+                throw new Exception("Attempt to engage unavailable node:, ID " + this.ID);
+            }
+            
+            Parent = parent;
+            this.OnAssigned(parent);
+        }
+
+        public void Start()
+        {
+            if(State == NodeState.Engaged)
+            {
+                throw new Exception("Node already engaged");
+            }
+            State = NodeState.Engaged;
+            this.OnStart();
+        }
+
+        public void Update()
+        {
+            if (State != NodeState.Engaged) return;
+            this.OnUpdate();
+        }
+
+        public void Stop()
+        {
+            if (State != NodeState.Engaged) return;
+            State = NodeState.Available;
+            this.OnStop();
+        }
+
+
 
         public string[] GetInterfaceList()
         {
@@ -174,30 +225,40 @@ namespace InteractionFramework
             if (!HasAttributes(attributes)) return false;
             return true;
         }
+
+     
+
+
         /// <summary>
         /// Called when the node is registered with input system
         /// </summary>
-        virtual public void OnRegister() { }
+        virtual protected void OnRegister() { }
         /// <summary>
         /// Called when the node is added to an interaction node
         /// </summary>
-        virtual public void OnEngaged() { IsInUse = true; }
+        virtual protected void OnAssigned(InteractionNode parent)
+        {
+            
+        }
         /// <summary>
         /// Called on owner interaction node start
         /// </summary>
-        virtual public void OnStart() { }
+        virtual protected void OnStart() { }
         /// <summary>
         /// Called every frame
         /// </summary>
-        virtual public void Update() { }
+        virtual protected void OnUpdate() { }
         /// <summary>
         /// Called when owner interacction node shuts down
         /// </summary>
-        virtual public void OnStop() { }
+        virtual protected void OnStop() { }
         /// <summary>
         /// Called when this node is released to the pool of available nodes by it's current owner(interaction node)
         /// </summary>
-        virtual public void OnReleased() { IsInUse = false; }
+        virtual protected void OnReleased()
+        {
+
+        }
 
     }
 }

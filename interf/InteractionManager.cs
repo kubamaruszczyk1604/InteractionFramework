@@ -11,7 +11,7 @@ namespace InteractionFramework
 
         public static readonly InteractionManager Instance = new InteractionManager();
         private List<InteractionNode> m_AvailableNodes;
-        private List<InteractionManager> m_UsedNodes;
+
         static InteractionManager()
         {
 
@@ -20,8 +20,21 @@ namespace InteractionFramework
         private InteractionManager()
         {
             m_AvailableNodes = new List<InteractionNode>();
-            m_UsedNodes = new List<InteractionManager>();
         }
+
+        public void RegisterInteracionNode(InteractionNode node)
+        {
+            if (m_AvailableNodes.Contains(node)) throw new Exception("Interaction node: " + node.ID + " already registered with Interaction Manager!");
+            m_AvailableNodes.Add(node);
+            node.OnRegister();
+        }
+
+
+        public void Engage(InteractionNode node, Entity parent)
+        {
+            //TODO: engage node
+        }
+
 
 
     }
