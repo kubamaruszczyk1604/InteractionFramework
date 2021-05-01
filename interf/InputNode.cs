@@ -28,11 +28,10 @@ namespace InteractionFramework
             p_CurrentUser = null;
         }
 
-
-        public void Register()
-        {
-            this.OnRegister();
-        }
+        //public void Register()
+        //{
+        //    this.OnRegister();
+        //}
 
         public void AddNewParrent(InteractionNode parent)
         {
@@ -40,15 +39,16 @@ namespace InteractionFramework
             {
                 throw new Exception("Cannod Assign to the same parent twice, ID: " + this.ID );
             }
-            if(State == InputNodeState.Unavailable)
-            {
-                throw new Exception("Attempt to engage unavailable node:, ID " + this.ID);
-            }
+            //if(State == InputNodeState.Unavailable)
+            //{
+            //    throw new Exception("Attempt to engage unavailable node:, ID " + this.ID);
+            //}
 
             Parents.Add(parent);
             this.OnNewParentAdded(parent);
         }
 
+        //Call to enable
         public void Start(InteractionNode caller)
         {
           

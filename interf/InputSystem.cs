@@ -25,7 +25,7 @@ namespace InteractionFramework
         {
             if (m_Nodes.Contains(node)) throw new Exception("Node " + node.ID + " is already registered");
             m_Nodes.Add(node);
-            node.Register();
+            //node.Register();
         }
 
 

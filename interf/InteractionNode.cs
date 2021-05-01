@@ -170,7 +170,8 @@ namespace InteractionFramework
 
         public void Start()
         {
-           
+           //TODO move responsibility of checking stuff from start and ask users to run them explicitly
+
             if (CheckBusy() != InteractionNodeState.Free) throw new Exception("Node already in use!");
 
             InputSatisfied = this.DoSearch();
@@ -178,14 +179,17 @@ namespace InteractionFramework
             else this.OnSearchFailed();
 
 
-            this.OnStart();
+           
 
             if (InputSatisfied)
             {
+                State = InteractionNodeState.InUse;
+                this.OnStart();
                 for (int i = 0; i < m_InputNodes.Count; ++i)
                 {
                     m_InputNodes[i].Start(this);
                 }
+
             }
             
         }
