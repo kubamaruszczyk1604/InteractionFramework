@@ -97,7 +97,7 @@ namespace InteractionFramework
         ICommandProvider m_CommandProvider = null;
         Attribute[] attribList = new Attribute[] { new Attribute("Name", "Mouse"), new Attribute("Type", "2Buttons") };
 
-        override protected bool DoSearch()
+        override protected bool FindInputNodes()
         {
 
             //if(TryFindMatchingNode(attribList, m_DirectionProvider, out InputNode node))
@@ -122,18 +122,16 @@ namespace InteractionFramework
             return false;
         }
 
-        override protected void OnSearchSucess()
+        override protected void OnBecomeReady()
         {
-            //m_PosProvider.onPositionChanged = null;
-            //m_CommandProvider.onCommand = null;
             m_PosProvider.onPositionChanged += OnPositionChanged;
             m_CommandProvider.onCommand += OnCommand;
         }
 
-        override protected void OnSearchFailed()
+        override protected void OnBecomeUnavailable(InteractionNodeState state)
         {
-            m_PosProvider.onPositionChanged = null;
-            m_CommandProvider.onCommand = null;
+            m_PosProvider.onPositionChanged -= OnPositionChanged;
+            m_CommandProvider.onCommand -= OnCommand;
         }
 
         void OnPositionChanged(Vector3 delta, Vector3 posNow)

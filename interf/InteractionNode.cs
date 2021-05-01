@@ -10,9 +10,8 @@ namespace InteractionFramework
     public abstract class InteractionNode
     {
        
-        public bool InputSatisfied { get; private set; }
         public string ID { get; private set; }
-        public InteractionNodeState State { get; private set; }
+        private InteractionNodeState m_State;
 
         private Dictionary<string, Attribute> m_Attributes;
         private List<InputNode> m_InputNodes;
@@ -23,44 +22,54 @@ namespace InteractionFramework
             m_Attributes = new Dictionary<string, Attribute>();
             m_InputNodes = new List<InputNode>();
             ID = "unnamed";
-           
+            m_State = InteractionNodeState.NoInputMatchingCriteria;
             InteractionManager.Instance.RegisterInteracionNode(this);
         }
 
-        public bool Search()
+        private bool Search()
         {
             m_InputNodes.Clear();
-            bool found = DoSearch();
-            if(found)
-            {
-                if(!InputSatisfied) OnSearchSucess();
-                InputSatisfied = true;
-                return true;
-            }
-            else
-            {
-                if (InputSatisfied) OnSearchFailed();
-                InputSatisfied = false;
-                return false;
-            }
+            bool found = FindInputNodes();
+            return found;
         }
 
-        InteractionNodeState CheckBusy()
+        public InteractionNodeState QueryState()
         {
-            if (State == InteractionNodeState.InUse) return State;
-            
+            if (m_State == InteractionNodeState.InUse) return m_State;
+            if(!Search())
+            {
+                if(m_State != InteractionNodeState.NoInputMatchingCriteria)
+                {
+                    m_State = InteractionNodeState.NoInputMatchingCriteria;
+                    OnBecomeUnavailable(m_State);
+                }
+
+                return m_State;
+            }
 
             for (int i = 0; i < m_InputNodes.Count; ++i)
             {
                 if (m_InputNodes[i].State == InputNodeState.InUse)
                 {
-                    State = InteractionNodeState.UnderlyingInputInUse; 
-                    return InteractionNodeState.UnderlyingInputInUse;
+                    if(m_State != InteractionNodeState.UnderlyingInputInUse)
+                    {
+                        m_State = InteractionNodeState.UnderlyingInputInUse;
+                        OnBecomeUnavailable(m_State);
+                    }
+
+                    return m_State;
                 }
             }
-            State = InteractionNodeState.Free;
-            return InteractionNodeState.Free;
+            if(m_State != InteractionNodeState.Free)
+            {
+                m_State = InteractionNodeState.Free;
+                OnBecomeReady();
+            }
+
+            return m_State;
         }
+
+
 
         protected bool AddInputNode(InputNode node)
         {
@@ -132,10 +141,10 @@ namespace InteractionFramework
             return false;
         }
 
-        abstract protected bool DoSearch();
+        abstract protected bool FindInputNodes();
 
-        virtual protected void OnSearchSucess() { }
-        virtual protected void OnSearchFailed() { }
+        virtual protected void OnBecomeReady() { }
+        virtual protected void OnBecomeUnavailable(InteractionNodeState state) { }
         virtual protected void OnStart() { }
         virtual protected void OnUpdate() { }
         virtual protected void OnStop() { }
@@ -170,20 +179,12 @@ namespace InteractionFramework
 
         public void Start()
         {
-           //TODO move responsibility of checking stuff from start and ask users to run them explicitly
+            //TODO move responsibility of checking stuff from start and ask users to run them explicitly
+            QueryState();
 
-            if (CheckBusy() != InteractionNodeState.Free) throw new Exception("Node already in use!");
-
-            InputSatisfied = this.DoSearch();
-            if (InputSatisfied) this.OnSearchSucess();
-            else this.OnSearchFailed();
-
-
-           
-
-            if (InputSatisfied)
+            if (m_State == InteractionNodeState.Free)
             {
-                State = InteractionNodeState.InUse;
+                m_State = InteractionNodeState.InUse;
                 this.OnStart();
                 for (int i = 0; i < m_InputNodes.Count; ++i)
                 {
@@ -196,28 +197,29 @@ namespace InteractionFramework
 
         public void Update()
         {
-            if (InputSatisfied)
+            if (m_State == InteractionNodeState.InUse)
             {
                 for (int i = 0; i < m_InputNodes.Count; ++i)
                 {
                     m_InputNodes[i].Update(this);
                 }
+                this.OnUpdate();
             }
-            this.OnUpdate();
+            
 
         }
 
         public void Stop()
         {
-            if(InputSatisfied)
+            if(m_State == InteractionNodeState.InUse)
             {
                 for (int i = 0; i < m_InputNodes.Count; ++i)
                 {
                     m_InputNodes[i].Stop(this);
                 }
-
+                this.Stop();
             }
-            this.Stop();
+           
         }
     }
 
